@@ -20,9 +20,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var context : Context
 
     // TODO: - Add to local storage
-    private var startTime: LocalTime? = null
-    private var endTime: LocalTime? = null
-    private var interval: Float? = null
+    private var startTime: LocalTime = LocalTime.of(9,0)
+    private var endTime: LocalTime = LocalTime.of(18,30)
+    private var interval: Float = 2.0F
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,7 +79,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun startWork() {
         val inputData = Data.Builder()
-            .putAll(mapOf("startTime" to startTime, "endTime" to endTime, "interval" to interval))
+            .putAll(mapOf(
+                "startTime" to startTime.toString(),
+                "endTime" to endTime.toString(),
+                "interval" to interval)
+            )
             .build()
 
         val playerWorkRequest : WorkRequest = OneTimeWorkRequestBuilder<PlayerWorker>()

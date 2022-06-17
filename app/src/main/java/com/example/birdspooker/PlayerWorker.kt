@@ -21,9 +21,9 @@ class PlayerWorker(context : Context, workerParameters: WorkerParameters) :
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun doWork(): Result {
-        val startTime = inputData.keyValueMap["startTime"] as? LocalTime
-        val endTime = inputData.keyValueMap["startTime"] as? LocalTime
-        val interval = inputData.getFloat("interval", 15F)
+        val startTime = LocalTime.parse(inputData.keyValueMap["startTime"] as String)
+        val endTime = LocalTime.parse(inputData.keyValueMap["endTime"] as String)
+        val interval = inputData.keyValueMap["interval"] as Float
 
         Log.d("PlayerWorker", "Start time = $startTime, End time = $endTime")
 
