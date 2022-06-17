@@ -1,33 +1,28 @@
 package com.example.birdspooker
 
-import android.app.AlarmManager
-import android.app.PendingIntent
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.NumberPicker
-import android.widget.TimePicker
 import android.widget.Toast
-import androidx.work.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import com.example.birdspooker.databinding.ActivityMainBinding
-import java.util.*
-import java.util.concurrent.TimeUnit
+import nl.joery.timerangepicker.TimeRangePicker
+import java.time.LocalTime
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityMainBinding
-
     private lateinit var context : Context
-//    private lateinit var alarmManager : AlarmManager
 
-    lateinit var startPicker: NumberPicker
-    lateinit var endPicker: NumberPicker
-    lateinit var intervalPicker: NumberPicker
+    // TODO: - Add to local storage
+    private var startTime: LocalTime? = null
+    private var endTime: LocalTime? = null
+    private var interval: Float? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,55 +32,65 @@ class MainActivity : AppCompatActivity() {
 
         context = this
 
-
-        startPicker = findViewById(R.id.startPicker)
-        startPicker.minValue = 0
-        startPicker.maxValue = 23
-
-        endPicker = findViewById(R.id.endPicker)
-        endPicker.minValue = 0
-        endPicker.maxValue = 23
-
-        intervalPicker = findViewById(R.id.intervalPicker)
-        intervalPicker.minValue = 1
-        intervalPicker.maxValue = 60
-
-
-
-        binding.buttonStart.setOnClickListener() {
-
-            val inputData = Data.Builder()
-                .putInt("startTime", startPicker.value)
-                .putInt("endTime", endPicker.value)
-                .putLong("interval", intervalPicker.value.toLong())
-                .build()
-
-            val playerWorkRequest : WorkRequest = OneTimeWorkRequestBuilder<PlayerWorker>()
-                .setInputData(inputData)
-                .build()
-
-            startWork(playerWorkRequest)
-        }
-
-        binding.buttonStop.setOnClickListener() {
-            stopWork()
-
-            val toast = Toast.makeText(context, "Timer removed", Toast.LENGTH_LONG)
-            toast.show()
-        }
-
+        binding.intervalSlider.addOnChangeListener { _, value, _ -> onIntervalSliderValueChanged(value) }
+        binding.timeRangePicker.setOnTimeChangeListener(onTimeChangeListener = onTimeRangePickerListener())
+        binding.buttonStart.setOnClickListener() { onStartBtnClicked() }
+        binding.buttonStop.setOnClickListener() { onStopBtnClicked() }
     }
 
-    private fun startWork(playerWorkRequest: WorkRequest) {
+    // MARK: - Actions
+    private fun onStartBtnClicked() {
+        startWork()
+        val toast = Toast.makeText(context, "Time is set!", Toast.LENGTH_LONG)
+        toast.show()
+    }
 
+    private fun onStopBtnClicked() {
+        // TODO: - Remove this line
+        stopWork()
+        val toast = Toast.makeText(context, "Timer removed", Toast.LENGTH_LONG)
+        toast.show()
+    }
+
+    // TODO: - Set time to TextViews
+    private fun onTimeRangePickerListener(): TimeRangePicker.OnTimeChangeListener {
+        return object : TimeRangePicker.OnTimeChangeListener {
+            override fun onStartTimeChange(startTime: TimeRangePicker.Time) {
+                Log.d("TimeRangePicker", "Start time: $startTime")
+                this@MainActivity.startTime = startTime.localTime
+            }
+
+            override fun onEndTimeChange(endTime: TimeRangePicker.Time) {
+                Log.d("TimeRangePicker", "End time: $endTime")
+                this@MainActivity.endTime = endTime.localTime
+            }
+
+            override fun onDurationChange(duration: TimeRangePicker.TimeDuration) {
+                Log.d("TimeRangePicker", "Duration: $duration")
+            }
+        }
+    }
+
+    private fun onIntervalSliderValueChanged(value: Float) {
+        Log.d("IntervalSlider", "Interval: $value")
+        interval = value
+    }
+
+
+    private fun startWork() {
+        val inputData = Data.Builder()
+            .putAll(mapOf("startTime" to startTime, "endTime" to endTime, "interval" to interval))
+            .build()
+
+        val playerWorkRequest : WorkRequest = OneTimeWorkRequestBuilder<PlayerWorker>()
+            .setInputData(inputData)
+            .build()
+
+        // TODO: - Remove this line
         stopWork()
 
         WorkManager.getInstance(context)
             .enqueue(playerWorkRequest)
-
-        val toast = Toast.makeText(context, "Time is set!", Toast.LENGTH_LONG)
-        toast.show()
-
     }
 
     private fun stopWork() {

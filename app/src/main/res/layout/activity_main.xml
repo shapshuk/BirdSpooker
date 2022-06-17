@@ -3,94 +3,169 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="2dp"
     tools:context=".MainActivity">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="70dp">
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+        <nl.joery.timerangepicker.TimeRangePicker
+            android:id="@+id/timeRangePicker"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="32dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:trp_endTime="18:30"
+            app:trp_sliderWidth="8dp"
+            app:trp_startTime="9:00"
+            app:trp_thumbIconEnd="@drawable/ic_snooze"
+            app:trp_thumbIconStart="@drawable/ic_alarm"
+            app:trp_thumbSize="28dp"
+            app:trp_hourFormat="FORMAT_24"/>
 
-            <TextView
-                android:id="@+id/startText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:text="Начало" />
-
-            <NumberPicker
-                android:id="@+id/startPicker"
-                android:layout_width="wrap_content"
-                android:layout_below="@+id/startText"
-                android:layout_height="160dp" />
-
-        </RelativeLayout>
-
-
-
-        <RelativeLayout
+        <LinearLayout
+            android:id="@+id/time_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp">
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@+id/timeRangePicker"
+            app:layout_constraintEnd_toEndOf="@+id/timeRangePicker"
+            app:layout_constraintStart_toStartOf="@+id/timeRangePicker"
+            app:layout_constraintTop_toTopOf="@+id/timeRangePicker">
 
-            <TextView
-                android:id="@+id/endText"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/bedtime_layout"
+                android:layout_width="90dp"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:text="Конец" />
+                android:orientation="horizontal"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp">
 
-            <NumberPicker
-                android:id="@+id/endPicker"
-                android:layout_width="wrap_content"
-                android:layout_height="160dp"
-                android:layout_below="@+id/endText"/>
-        </RelativeLayout>
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_snooze"
+                    app:tint="#000" />
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="До"
+                        android:textAlignment="center"
+                        android:textColor="?android:textColorPrimary"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/start_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:textColor="?android:textColorPrimary"
+                        android:textSize="20sp"
+                        tools:text="8:30" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/wake_layout"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_alarm"
+                    app:tint="#000" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="С"
+                        android:textAlignment="center"
+                        android:textColor="?android:textColorPrimary"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/end_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:textColor="?android:textColorPrimary"
+                        android:textSize="20sp"
+                        tools:text="8:30"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/intervalSlider"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="70dp">
+            android:layout_marginTop="16dp"
+            android:stepSize="0.5"
+            android:valueFrom="0.0"
+            android:valueTo="60.0"
+            app:layout_constraintEnd_toEndOf="@+id/timeRangePicker"
+            app:layout_constraintStart_toStartOf="@+id/timeRangePicker"
+            app:layout_constraintTop_toBottomOf="@+id/timeRangePicker"
+            app:thumbRadius="12dp"
+            app:trackColorInactive="#E1E1E1"
+            app:trackHeight="8dp" />
 
-            <TextView
-                android:id="@+id/intervalText"
-                android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/buttonsContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/timeRangePicker"
+            app:layout_constraintStart_toStartOf="@+id/timeRangePicker">
+
+            <Button
+                android:id="@+id/buttonStop"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:text="Интервал"  />
+                android:layout_weight="1"
+                android:text="@string/stop" />
 
-            <NumberPicker
-                android:id="@+id/intervalPicker"
-                android:layout_width="wrap_content"
-                android:layout_height="160dp"
-                android:layout_below="@+id/intervalText"/>
+            <Button
+                android:id="@+id/buttonStart"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/start_btn" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <Button
-        android:id="@+id/buttonStart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/linearLayout"
-        android:layout_marginTop="100dp"
-        android:layout_centerHorizontal="true"
-        android:text="Запуск" />
-
-    <Button
-        android:id="@+id/buttonStop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/buttonStart"
-        android:layout_marginTop="30dp"
-        android:layout_centerHorizontal="true"
-        android:text="Стоп" />
 
 </RelativeLayout>

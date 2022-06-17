@@ -4,41 +4,37 @@ import android.content.Context
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.net.Uri
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import java.time.LocalTime
+import java.time.ZoneId
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 class PlayerWorker(context : Context, workerParameters: WorkerParameters) :
     Worker(context, workerParameters){
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun doWork(): Result {
+        val startTime = inputData.keyValueMap["startTime"] as? LocalTime
+        val endTime = inputData.keyValueMap["startTime"] as? LocalTime
+        val interval = inputData.getFloat("interval", 15F)
 
-        try {
+        Log.d("PlayerWorker", "Start time = $startTime, End time = $endTime")
 
-            val startTime = inputData.getInt("startTime", 0)
-            val endTime = inputData.getInt("endTime", 23)
-            Log.d("PlayerWorker", "Start time = $startTime, End time = $endTime")
-
-            val c = Calendar.getInstance()
-            val timeOfDay = c[Calendar.HOUR_OF_DAY]
-
-            // solution of night problem (?)
-            if ((endTime < startTime) && ((timeOfDay<endTime)||(timeOfDay>=startTime))) {
-                playMusic()
-            } else if (timeOfDay in startTime until endTime) {
-                playMusic()
-            }
-
-        } catch (ex : Exception) {
-            return Result.failure()
+        val time = Date().toInstant().atZone(ZoneId.systemDefault()).toLocalTime()
+        if (time.isAfter(startTime) && time.isBefore(endTime)) {
+            playMusic()
         }
 
+        // TODO: - Enqueue unique work
         val tenMinuteRequest = OneTimeWorkRequestBuilder<PlayerWorker>()
-            .setInitialDelay(inputData.getLong("interval", 15), TimeUnit.MINUTES)
+            .setInitialDelay(interval.toLong(), TimeUnit.MINUTES)
             .setInputData(inputData)
             .build()
         WorkManager.getInstance(applicationContext)
