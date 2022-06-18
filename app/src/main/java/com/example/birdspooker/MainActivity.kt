@@ -1,9 +1,12 @@
 package com.example.birdspooker
 
 import android.content.Context
+import android.icu.util.Calendar
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
@@ -20,8 +23,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var context : Context
 
     // TODO: - Add to local storage
-    private var startTime: LocalTime = LocalTime.of(9,0)
-    private var endTime: LocalTime = LocalTime.of(18,30)
+    private var startTime: TimeRangePicker.Time = TimeRangePicker.Time(9, 0)
+    private var endTime: TimeRangePicker.Time = TimeRangePicker.Time(18, 30)
+
     private var interval: Float = 2.0F
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,12 +61,26 @@ class MainActivity : AppCompatActivity() {
         return object : TimeRangePicker.OnTimeChangeListener {
             override fun onStartTimeChange(startTime: TimeRangePicker.Time) {
                 Log.d("TimeRangePicker", "Start time: $startTime")
-                this@MainActivity.startTime = startTime.localTime
+                this@MainActivity.startTime = startTime
+
+                val startTimeText = if (startTime.minute == 0) {
+                    "${startTime.hour}:${startTime.minute}0"
+                } else{
+                    "${startTime.hour}:${startTime.minute}"
+                }
+                binding.startTime.text = startTimeText
             }
 
             override fun onEndTimeChange(endTime: TimeRangePicker.Time) {
                 Log.d("TimeRangePicker", "End time: $endTime")
-                this@MainActivity.endTime = endTime.localTime
+                this@MainActivity.endTime = endTime
+
+                val endTimeText = if (endTime.minute == 0) {
+                    "${endTime.hour}:${endTime.minute}0"
+                } else{
+                    "${endTime.hour}:${endTime.minute}"
+                }
+                binding.endTime.text = endTimeText
             }
 
             override fun onDurationChange(duration: TimeRangePicker.TimeDuration) {

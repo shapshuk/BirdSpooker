@@ -11,6 +11,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import nl.joery.timerangepicker.TimeRangePicker
 import java.time.LocalTime
 import java.time.ZoneId
 import java.util.*
@@ -23,11 +24,16 @@ class PlayerWorker(context : Context, workerParameters: WorkerParameters) :
     override fun doWork(): Result {
         val startTime = LocalTime.parse(inputData.keyValueMap["startTime"] as String)
         val endTime = LocalTime.parse(inputData.keyValueMap["endTime"] as String)
+
+        val newStartTime =
+
+
         val interval = inputData.keyValueMap["interval"] as Float
 
         Log.d("PlayerWorker", "Start time = $startTime, End time = $endTime")
 
         val time = Date().toInstant().atZone(ZoneId.systemDefault()).toLocalTime()
+//        val time = TimeRangePicker().
         if (time.isAfter(startTime) && time.isBefore(endTime)) {
             playMusic()
         }
@@ -44,7 +50,7 @@ class PlayerWorker(context : Context, workerParameters: WorkerParameters) :
     }
 
     private fun playMusic(){
-        val randSound = (1..3).random()
+        val randSound = (1..8).random()
         val localUri : Uri = Uri.parse("android.resource://com.example.birdspooker/raw/sound$randSound")
 
         val mediaPlayer = MediaPlayer().apply {
